@@ -33,4 +33,14 @@ wget https://raw.githubusercontent.com/HouseOfLogicGH/ProxmoxPVEv9/main/NoSubscr
 bash remove-subscription-popup.sh
 ```
 
-Hard-refresh the browser (Ctrl+Shift+R). Run it again after `proxmox-widget-toolkit` updates. Undo with `bash remove-subscription-popup.sh --undo`.
+Or by hand:
+
+```bash
+f=/usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+cp -n "$f" /root/proxmoxlib.js.orig
+set +H   # stops bash reading !false as history expansion
+perl -i -pe "s{(?<!false /\* kit \*/ && )\b(\w+\.data\.status\.toLowerCase\(\) !== 'active')}{false /* kit */ && \$1}g" "$f"
+systemctl restart pveproxy
+```
+
+Hard-refresh the browser (Ctrl+Shift+R). Run it again after `proxmox-widget-toolkit` updates. Undo with `bash remove-subscription-popup.sh --undo`, or `cp /root/proxmoxlib.js.orig "$f" && systemctl restart pveproxy`.
